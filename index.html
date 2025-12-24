@@ -1,1 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👁️ Aphantasia Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f0f23);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(30, 30, 50, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .disclaimer {
+            background: rgba(74, 144, 226, 0.15);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: #7eb3ff;
+        }
+
+        .disclaimer h3 {
+            margin-bottom: 10px;
+            color: #a0c9ff;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4a90e2;
+        }
+
+        .instructions h3 {
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .instructions p {
+            margin-bottom: 10px;
+            color: #cccccc;
+        }
+
+        .instructions .key-instruction {
+            background: rgba(74, 144, 226, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 3px solid #4a90e2;
+        }
+
+        .section-header {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0 20px 0;
+            border-left: 4px solid #4a90e2;
+        }
+
+        .section-header h3 {
+            color: #7eb3ff;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            color: #cccccc;
+            font-size: 1rem;
+        }
+
+        .checklist {
+            margin-bottom: 30px;
+        }
+
+        .checklist-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .checklist-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .checklist-item.answered {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(53, 122, 189, 0.2));
+            border-color: rgba(74, 144, 226, 0.4);
+        }
+
+        .item-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .item-number {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-statement {
+            font-weight: 500;
+            font-size: 1.05rem;
+            color: #ffffff;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .radio-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .radio-option.selected {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .radio-option input[type="radio"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            margin-right: 12px;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .radio-option input[type="radio"]:checked {
+            border-color: white;
+        }
+
+        .radio-option input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .radio-option label {
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 0.95rem;
+            flex: 1;
+        }
+
+        .radio-option .rating-value {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+
+        .results {
+            background: linear-gradient(135deg, rgba(40, 40, 60, 0.8), rgba(30, 30, 50, 0.8));
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #cccccc;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .interpretation {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid;
+            text-align: left;
+        }
+
+        .interpretation.aphantasia {
+            border-left-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .interpretation.hypophantasia {
+            border-left-color: #e67e22;
+            background: rgba(230, 126, 34, 0.1);
+        }
+
+        .interpretation.average {
+            border-left-color: #f39c12;
+            background: rgba(243, 156, 18, 0.1);
+        }
+
+        .interpretation.vivid {
+            border-left-color: #27ae60;
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .interpretation.hyperphantasia {
+            border-left-color: #9b59b6;
+            background: rgba(155, 89, 182, 0.1);
+        }
+
+        .interpretation h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .interpretation.aphantasia h3 { color: #e74c3c; }
+        .interpretation.hypophantasia h3 { color: #e67e22; }
+        .interpretation.average h3 { color: #f39c12; }
+        .interpretation.vivid h3 { color: #27ae60; }
+        .interpretation.hyperphantasia h3 { color: #9b59b6; }
+
+        .interpretation ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .interpretation li {
+            margin-bottom: 8px;
+            color: #cccccc;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .checklist-item {
+                padding: 15px;
+            }
+
+            .item-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-number {
+                margin-bottom: 10px;
+            }
+
+            .radio-group {
+                gap: 8px;
+            }
+
+            .radio-option {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+
+            .score-display {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .score-display {
+                font-size: 2rem;
+            }
+
+            .radio-option label {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👁️ Aphantasia Assessment</h1>
+            <p>Vividness of Visual Imagery Questionnaire (VVIQ)</p>
+        </div>
+
+        <div class="content">
+            <div class="disclaimer">
+                <h3>🧠 Important Disclaimer</h3>
+                <p>This screening tool is for educational and self-awareness purposes only. It is not a diagnostic instrument. The VVIQ was developed by David Marks (1973) to assess individual differences in visual imagery vividness. This assessment can help you understand your visual imagination abilities.</p>
+            </div>
+
+            <div class="instructions">
+                <h3>Instructions</h3>
+                <p><strong>This questionnaire assesses the vividness of your visual mental imagery.</strong></p>
+                
+                <div class="key-instruction">
+                    <p><strong>⚠️ IMPORTANT: Close your eyes before imagining each scene!</strong></p>
+                    <p>For each item, close your eyes and try to visualize the described scene or person. Then rate how vivid your mental image is using the scale provided.</p>
+                </div>
+
+                <p><strong>Rating Scale:</strong></p>
+                <p>
+                    <strong>5 - Perfectly clear and vivid</strong> (as clear as actually seeing it)<br>
+                    <strong>4 - Clear and reasonably vivid</strong><br>
+                    <strong>3 - Moderately clear and vivid</strong><br>
+                    <strong>2 - Vague and dim</strong><br>
+                    <strong>1 - No image at all</strong> (you only "know" you are thinking of the object)
+                </p>
+
+                <p style="margin-top: 15px;"><strong>There are no right or wrong answers.</strong> Some people naturally experience vivid mental imagery, while others experience little to none. Both are normal variations in human cognition.</p>
+            </div>
+
+            <div class="checklist" id="checklist">
+                <!-- Items will be generated by JavaScript -->
+            </div>
+
+            <div class="results">
+                <div class="score-display" id="score">0</div>
+                <div class="score-label">VVIQ Score (out of 80)</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+                <div class="interpretation" id="interpretation">
+                    <h3>Complete the assessment to see your results</h3>
+                    <p>Answer all 16 questions above to calculate your VVIQ score and view detailed interpretation of your visual imagery abilities.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const vviqQuestions = [
+            {
+                section: "Section 1: Think of a friend or relative you see frequently",
+                prompt: "Close your eyes and visualize this person. Rate the vividness of:",
+                items: [
+                    "The exact contour of their face, head, shoulders, and body",
+                    "Their characteristic poses of head and body",
+                    "The precise carriage, length of step in walking",
+                    "The different colors worn in some familiar clothes"
+                ]
+            },
+            {
+                section: "Section 2: Think of a rising sun",
+                prompt: "Close your eyes and visualize a rising sun. Rate the vividness of:",
+                items: [
+                    "The sun rising above the horizon into a hazy sky",
+                    "The sky clears and surrounds the sun with blueness",
+                    "Clouds appear and the sun shines through them",
+                    "The sun sinking below the horizon and the sky becoming dark"
+                ]
+            },
+            {
+                section: "Section 3: Think of a shop you often visit",
+                prompt: "Close your eyes and visualize this shop from the street. Rate the vividness of:",
+                items: [
+                    "The overall appearance of the shop from the opposite side of the road",
+                    "A window display including details of colors, shapes, and objects",
+                    "You are near the entrance, think of the color, shape, and details of the door",
+                    "You enter the shop, and look around at the counters and customers"
+                ]
+            },
+            {
+                section: "Section 4: Think of a country scene with trees, mountains, and a lake",
+                prompt: "Close your eyes and visualize this country scene. Rate the vividness of:",
+                items: [
+                    "The contours of the landscape",
+                    "The color and shape of the trees",
+                    "The color and shape of the lake",
+                    "A strong wind blows on the trees and on the lake causing waves and movement"
+                ]
+            }
+        ];
+
+        function initializeChecklist() {
+            const checklistContainer = document.getElementById('checklist');
+            let questionNumber = 0;
+            
+            vviqQuestions.forEach((section, sectionIndex) => {
+                // Add section header
+                const sectionHeader = document.createElement('div');
+                sectionHeader.className = 'section-header';
+                sectionHeader.innerHTML = `
+                    <h3>${section.section}</h3>
+                    <p>${section.prompt}</p>
+                `;
+                checklistContainer.appendChild(sectionHeader);
+
+                // Add items for this section
+                section.items.forEach((item, itemIndex) => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'checklist-item';
+                    itemElement.innerHTML = `
+                        <div class="item-header">
+                            <div class="item-number">${questionNumber + 1}</div>
+                            <div class="item-content">
+                                <div class="item-statement">${item}</div>
+                                <div class="radio-group">
+                                    <div class="radio-option" onclick="selectOption(${questionNumber}, 5)">
+                                        <input type="radio" name="question-${questionNumber}" value="5" id="q${questionNumber}-5">
+                                        <label for="q${questionNumber}-5">Perfectly clear and vivid (as clear as actually seeing it)</label>
+                                        <span class="rating-value">5</span>
+                                    </div>
+                                    <div class="radio-option" onclick="selectOption(${questionNumber}, 4)">
+                                        <input type="radio" name="question-${questionNumber}" value="4" id="q${questionNumber}-4">
+                                        <label for="q${questionNumber}-4">Clear and reasonably vivid</label>
+                                        <span class="rating-value">4</span>
+                                    </div>
+                                    <div class="radio-option" onclick="selectOption(${questionNumber}, 3)">
+                                        <input type="radio" name="question-${questionNumber}" value="3" id="q${questionNumber}-3">
+                                        <label for="q${questionNumber}-3">Moderately clear and vivid</label>
+                                        <span class="rating-value">3</span>
+                                    </div>
+                                    <div class="radio-option" onclick="selectOption(${questionNumber}, 2)">
+                                        <input type="radio" name="question-${questionNumber}" value="2" id="q${questionNumber}-2">
+                                        <label for="q${questionNumber}-2">Vague and dim</label>
+                                        <span class="rating-value">2</span>
+                                    </div>
+                                    <div class="radio-option" onclick="selectOption(${questionNumber}, 1)">
+                                        <input type="radio" name="question-${questionNumber}" value="1" id="q${questionNumber}-1">
+                                        <label for="q${questionNumber}-1">No image at all (you only "know" you are thinking of it)</label>
+                                        <span class="rating-value">1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    checklistContainer.appendChild(itemElement);
+                    questionNumber++;
+                });
+            });
+        }
+
+        function selectOption(questionIndex, value) {
+            // Update radio button
+            const radio = document.getElementById(`q${questionIndex}-${value}`);
+            if (radio) {
+                radio.checked = true;
+            }
+
+            // Update visual state
+            const item = document.querySelectorAll('.checklist-item')[questionIndex];
+            const options = item.querySelectorAll('.radio-option');
+            
+            options.forEach(option => option.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            item.classList.add('answered');
+            
+            updateScore();
+        }
+
+        function updateScore() {
+            let totalScore = 0;
+            let answeredQuestions = 0;
+            const totalQuestions = 16;
+
+            for (let i = 0; i < totalQuestions; i++) {
+                const selectedOption = document.querySelector(`input[name="question-${i}"]:checked`);
+                if (selectedOption) {
+                    answeredQuestions++;
+                    totalScore += parseInt(selectedOption.value);
+                }
+            }
+
+            // Update score display
+            document.getElementById('score').textContent = totalScore;
+            
+            // Update progress bar
+            const progress = (answeredQuestions / totalQuestions) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Update interpretation
+            updateInterpretation(totalScore, answeredQuestions);
+        }
+
+        function updateInterpretation(score, answeredQuestions) {
+            const interpretationElement = document.getElementById('interpretation');
+            
+            if (answeredQuestions < 16) {
+                interpretationElement.className = 'interpretation';
+                interpretationElement.innerHTML = `
+                    <h3>Assessment In Progress</h3>
+                    <p>You have answered ${answeredQuestions} out of 16 questions. Please complete all questions to see your full results and interpretation.</p>
+                `;
+                return;
+            }
+
+            let className = '';
+            let title = '';
+            let description = '';
+            let details = '';
+
+            if (score <= 32) {
+                className = 'aphantasia';
+                title = 'Aphantasia (16-32)';
+                description = 'Your score indicates you have aphantasia - the inability to voluntarily create mental images. You likely experience little to no visual imagery in your mind.';
+                details = `
+                    <p><strong>What this means:</strong></p>
+                    <ul>
+                        <li>You cannot or can barely visualize images, faces, or scenes in your mind</li>
+                        <li>When you "imagine" something, you conceptually know what it is without seeing it</li>
+                        <li>You may struggle to remember what people look like or recognize faces</li>
+                        <li>You likely think in words, concepts, or facts rather than pictures</li>
+                        <li>You may have difficulty with visual memory tasks</li>
+                        <li>Dreams may be less visual or you may not remember visual aspects of dreams</li>
+                    </ul>
+                    <p><strong>Important to know:</strong> Aphantasia affects about 2-5% of the population. It's not a disorder or disability - it's simply a different way of thinking. Many successful people have aphantasia and excel in fields requiring analytical or conceptual thinking.</p>
+                    <p><strong>Strengths often associated with aphantasia:</strong> Strong logical reasoning, focus on facts and data, excellent verbal memory, and ability to think abstractly without visual distractions.</p>
+                `;
+            } else if (score <= 48) {
+                className = 'hypophantasia';
+                title = 'Hypophantasia (33-48)';
+                description = 'Your score suggests you have hypophantasia - weak or dim mental imagery. You can form some visual images, but they tend to be vague and unclear.';
+                details = `
+                    <p><strong>What this means:</strong></p>
+                    <ul>
+                        <li>You can create mental images, but they're often vague, fleeting, or unclear</li>
+                        <li>Visual imagery requires significant effort and concentration</li>
+                        <li>Images may appear briefly before fading away</li>
+                        <li>You might see general shapes or outlines but lack detailed features</li>
+                        <li>Some visual memories may be clearer than others</li>
+                        <li>You may rely more on conceptual thinking than visual imagery</li>
+                    </ul>
+                    <p><strong>Living with hypophantasia:</strong> Your experience falls between aphantasia and typical imagery. You have some visual imagination but it's limited compared to most people. This is a normal variation in human cognition.</p>
+                `;
+            } else if (score <= 64) {
+                className = 'average';
+                title = 'Average Visual Imagery (49-64)';
+                description = 'Your score is in the typical range for visual imagery. You can create reasonably clear mental images when you try.';
+                details = `
+                    <p><strong>What this means:</strong></p>
+                    <ul>
+                        <li>You can visualize images, faces, and scenes with moderate clarity</li>
+                        <li>Mental images are present but may not be extremely detailed</li>
+                        <li>You can recall visual memories and imagine new scenarios</li>
+                        <li>Visualization comes naturally but may require some focus</li>
+                        <li>The clarity of your mental images varies depending on the subject</li>
+                        <li>You likely use a mix of visual and verbal thinking</li>
+                    </ul>
+                    <p><strong>Your imagery abilities:</strong> You have typical visual imagination skills. Most people fall into this range, able to conjure mental images that are reasonably clear but not necessarily photographic in quality.</p>
+                `;
+            } else if (score <= 72) {
+                className = 'vivid';
+                title = 'Vivid Visual Imagery (65-72)';
+                description = 'Your score indicates you have vivid mental imagery abilities. You can create clear, detailed images in your mind with relative ease.';
+                details = `
+                    <p><strong>What this means:</strong></p>
+                    <ul>
+                        <li>You can create clear and detailed mental images</li>
+                        <li>Visualization comes easily and naturally to you</li>
+                        <li>You can imagine faces, scenes, and objects with good clarity</li>
+                        <li>Mental images persist and can be manipulated in your mind</li>
+                        <li>You have strong visual memory capabilities</li>
+                        <li>You may think primarily in images and pictures</li>
+                    </ul>
+                    <p><strong>Your strengths:</strong> Your strong visual imagination can be advantageous in creative fields, spatial reasoning, visual arts, design, and tasks requiring mental rotation or visual planning.</p>
+                `;
+            } else {
+                className = 'hyperphantasia';
+                title = 'Hyperphantasia (73-80)';
+                description = 'Your score indicates you have hyperphantasia - extremely vivid mental imagery. Your visualizations are nearly as clear as real perception.';
+                details = `
+                    <p><strong>What this means:</strong></p>
+                    <ul>
+                        <li>Your mental images are extremely vivid and detailed</li>
+                        <li>Visualizations may be almost as clear as actually seeing something</li>
+                        <li>You can easily manipulate, rotate, and modify mental images</li>
+                        <li>You may have exceptional visual memory and recall</li>
+                        <li>You think primarily in vivid mental pictures</li>
+                        <li>Dreams are likely very visual and memorable</li>
+                        <li>You may sometimes confuse imagined details with real memories</li>
+                    </ul>
+                    <p><strong>Living with hyperphantasia:</strong> You experience visual imagination at an exceptional level. This can be a tremendous asset for creative work, visual arts, design, and spatial problem-solving. However, vivid imagery can sometimes be distracting or intrusive.</p>
+                    <p><strong>Notable advantage:</strong> Your ability to mentally simulate visual scenarios can enhance learning, creativity, and problem-solving across many domains.</p>
+                `;
+            }
+
+            interpretationElement.className = `interpretation ${className}`;
+            interpretationElement.innerHTML = `
+                <h3>${title}</h3>
+                <p>${description}</p>
+                ${details}
+                <p style="margin-top: 15px; font-style: italic; color: #999;">
+                    <strong>Important:</strong> The VVIQ is a screening tool, not a diagnostic instrument. Visual imagery exists on a spectrum, and everyone's experience is unique and valid. This assessment is meant for self-understanding and education only.
+                </p>
+            `;
+        }
+
+        // Initialize the checklist when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChecklist();
+            updateScore();
+        });
+    </script>
+</body>
+</html>
 
